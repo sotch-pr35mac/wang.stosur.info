@@ -27,6 +27,7 @@
 	<link rel="stylesheet" href="css/fonts/fontello/css/fontello.css" type="text/css" media="screen" />
 	<!-- Slidebars -->
 	<link rel="stylesheet" href="css/slidebars/slidebars.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="../style/sweetalert.css" type="text/css" media="screen" />
 	<!-- Font -->
 	<link href='https://fonts.googleapis.com/css?family=Oswald:300' rel='stylesheet' type='text/css'>
 	<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700,100' rel='stylesheet' type='text/css'>
@@ -1929,6 +1930,116 @@
 	<script type="text/javascript" src="js/main-slider.js"></script>
 	<script type="text/javascript" src="js/side-navbar.js"></script>
 	<script type="text/javascript" src="js/map-script.js"></script>
+	<script type="text/javascript" src="../src/sweetalert.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#willAttendButton").click(function() {
+				// Handle the Will Attend RSVP Function here
+				var rsvpName;
+				var rsvpEmail;
+				var rsvpPlusOne;
+				var rsvpPlusOneName;
+				swal({
+					title: "Attending",
+					text: "Are you sure you will attend?",
+					type: "info",
+					showCancelButton: true,
+					confirmButtonText: "I'm Sure, Let's Continue",
+					closeOnConfirm: false
+				}, function() {
+					swal({
+						title: "Attending",
+						text: "Your Name",
+						type: "input",
+						showCancelButton: true,
+						closeOnConfirm: false,
+						inputPlaceholder: "Your Name"
+					}, function(inputValue) {
+						if(inputValue === false) {
+							return false;
+						}
+
+						if(inputValue === "") {
+							swal.showInputError("You need to write something!");
+								return false;
+						}
+
+						rsvpName = inputValue;
+
+						swal({
+							title: "Attending",
+							text: "Your Email",
+							type: "input",
+							showCancelButton: true,
+							closeOnConfirm: false,
+							inputPlaceholder: "Your Email"
+						}, function(inputValue) {
+							if(inputValue === false) {
+								return false;
+							}
+
+							if(inputValue === "") {
+								swal.showInputError("You need to write something!");
+								return false;
+							}
+
+							rsvpEmail = inputValue;
+
+							swal({
+								title: "+1",
+								text: "Will you be requesting a plus one?",
+								type: "info",
+								showCancelButton: true,
+								confirmButtonText: "Yes, Me +1",
+								cancelButtonText: "No, Just Me",
+								closeOnConfirm: false,
+								closeOnCancel: false
+							}, function(isPlus) {
+								if(isPlus) {
+									// Handle the plus one information here
+									rsvpPlusOne = true;
+									swal({
+										title: "+1",
+										text: "Your Plus One's Name",
+										type: "input",
+										showCancelButton: false,
+										closeOnConfirm: false,
+										inputPlaceholder: "+1 Name"
+									}, function(inputValue) {
+										if(inputValue === false) {
+											return false;
+										}
+
+										if(inputValue === "") {
+											swal.showInputError("You need to write something!");
+											return false;
+										}
+
+										rsvpPlusOneName = inputValue;
+										// TODO: Finish the ajax call
+										swal("BETA", rsvpName+" will be attending with "+rsvpPlusOneName+" and we can contact you at "+rsvpEmail, "success");
+									});
+								}
+								else {
+									// Handle the just me information here
+									rsvpPlusOne = false;
+									rsvpPlusOne = false;
+									// TODO: Write this
+									swal("BETA", rsvpName+" will be attending alone and we can contact you at "+rsvpEmail, "success");
+								}
+							});
+						});
+					});
+				});
+			});
+
+			$("#willNotAttendButton").click(function() {
+				// Handle the Will Not Attend RSVP Function here
+				swal("will not attend");
+			});
+		});
+	</script>
 
 </body>
 
