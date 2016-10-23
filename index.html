@@ -1,0 +1,57 @@
+<html>
+<head>
+	<title>Wang-Stosur-Bassett Wedding</title>
+	<link href="style/sweetalert.css" type="text/css" rel="stylesheet">
+	<link href="style/bootstrap.min.css" rel="stylesheet">
+	<script src="src/jquery.min.js"></script>
+	<script src="src/sweetalert.min.js"></script>
+	<script type="text/javascript">
+		/*swal({
+			title: "Please select your language. 请选语言。",
+			text: "The English site will not work in China.",
+			showCancelButton: true,
+			confirmButtonText: "English Site",
+			cancelButtonText: "中文",
+			closeOnConfirm: false,
+			type: "question",
+			closeOnCancel: false
+		},
+		function(isEnglish) {
+			if(isEnglish) {
+				document.location.href = "en/index.html";
+			}
+			else {
+				document.location.href= "cn/index.html";
+			}
+		}
+	);
+
+	setTimeout(function() {
+		document.write("<center>");
+		document.write("<a href='en/index.html'>Click here for English Site.</a>");
+		document.write("<br>");
+		document.write("<a href='cn/index.html'>Click here for Chinese Site.</a>'");
+		document.write("</center>");
+	}, 5000); */
+	$(document).ready(function() {
+		$("#english").click(function() {
+			document.location.href = "en/index.html";
+		});
+
+		$("#chinese").click(function() {
+			document.location.href = "cn/index.html";
+		});
+	});
+	</script>
+</head>
+
+<body>
+	<center>
+		<br>
+		<h3>Please select your language. | 请选语言。</h3>
+		<br>
+		<br>
+		<button id="english" class="btn btn-lg btn-info">English Site</button>&nbsp;&nbsp;&nbsp;<button id="chinese" class="btn btn-lg btn-danger">中文</button>
+	</center>
+</body>
+</html>
