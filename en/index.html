@@ -1816,7 +1816,7 @@
 						<!-- END of MESSAGE -->
 
 						<!-- FORM FIELD -->
-						<div class="row">
+					<!--	<div class="row">
 							<div class="col-md-offset-1 col-md-10">
 								<div class="form-group">
 									<label for="inputname">*Name</label>
@@ -1827,7 +1827,7 @@
 									<input type="email" class="form-control ajax-input" id="inputemail" placeholder="" data-required="Email Required" data-output-label="Output Email">
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<!--END of FORM FIELD-->
 
 						<!-- BUTTON -->
@@ -2017,16 +2017,62 @@
 										}
 
 										rsvpPlusOneName = inputValue;
-										// TODO: Finish the ajax call
-										swal("BETA", rsvpName+" will be attending with "+rsvpPlusOneName+" and we can contact you at "+rsvpEmail, "success");
+										swal({
+											title: "Confirm",
+											text: rsvpName+" will be attending with "+rsvpPlusOneName+", and we can contact you at "+rsvpEmail,
+											type: 'info',
+											showCancelButton: true
+										}, function() {
+											$.ajax({
+												type: 'post',
+												url: 'rsvp.php',
+												data: {
+													'inputemail': rsvpEmail,
+													'inputname': rsvpName,
+													'inputevents': 'wedding',
+													'inputmessage': "Attending. Will bring a Plus One. +1: "+rsvpPlusOneName
+												},
+												success: function(res) {
+													console.log(res);
+													swal("Thank you!", "Your RSVP has been successfully sent. Thank you!", "success");
+												},
+												error: function(res) {
+													console.log(res);
+													swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
+												}
+											});
+										});
 									});
 								}
 								else {
 									// Handle the just me information here
 									rsvpPlusOne = false;
 									rsvpPlusOne = false;
-									// TODO: Write this
-									swal("BETA", rsvpName+" will be attending alone and we can contact you at "+rsvpEmail, "success");
+									swal({
+										title: "Confirm",
+										text: rsvpName+" will be attending alone, and we can contact you at "+rsvpEmail,
+										type: 'info',
+										showCancelButton: true
+									}, function() {
+										$.ajax({
+											type: 'post',
+											url: 'rsvp.php',
+											data: {
+												'inputemail': rsvpEmail,
+												'inputname': rsvpName,
+												'inputevents': 'wedding',
+												'inputmessage': "Attending. No Plus One."
+											},
+											success: function(res) {
+												console.log(res);
+												swal("Thank you!", "Your RSVP has been successfully sent. Thank you!", "success");
+											},
+											error: function(res) {
+												console.log(res);
+												swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
+											}
+										});
+									});
 								}
 							});
 						});
