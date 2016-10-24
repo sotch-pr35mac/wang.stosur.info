@@ -1934,7 +1934,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#willAttendButton").click(function() {
+		 	$("#willAttendButton").click(function() {
 				// Handle the Will Attend RSVP Function here
 				var rsvpName;
 				var rsvpEmail;
@@ -2020,7 +2020,7 @@
 										swal({
 											title: "Confirm",
 											text: rsvpName+" will be attending with "+rsvpPlusOneName+", and we can contact you at "+rsvpEmail,
-											type: 'info',
+											type: 'success',
 											showCancelButton: true
 										}, function() {
 											$.ajax({
@@ -2041,6 +2041,7 @@
 													swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
 												}
 											});
+											swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
 										});
 									});
 								}
@@ -2051,7 +2052,7 @@
 									swal({
 										title: "Confirm",
 										text: rsvpName+" will be attending alone, and we can contact you at "+rsvpEmail,
-										type: 'info',
+										type: 'success',
 										showCancelButton: true
 									}, function() {
 										$.ajax({
@@ -2072,6 +2073,7 @@
 												swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
 											}
 										});
+										swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
 									});
 								}
 							});
@@ -2113,7 +2115,7 @@
 						swal({
 							title: "Confirm",
 							text: rsvpName+" will not be attending the wedding.",
-							type: "info",
+							type: "success",
 							showCancelButton: true
 						}, function() {
 							$.ajax({
@@ -2130,7 +2132,7 @@
 								},
 								error: function(res) {
 									console.log(res);
-									swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
+									swal("Uh-oh!", "There was an error submitting your RSVP. Please try again at a later time.", "error");
 								}
 							});
 						});
