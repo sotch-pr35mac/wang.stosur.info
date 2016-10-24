@@ -2082,7 +2082,60 @@
 
 			$("#willNotAttendButton").click(function() {
 				// Handle the Will Not Attend RSVP Function here
-				swal("will not attend");
+				var rsvpName;
+				swal({
+					title: "Not Attending",
+					text: "Are you sure you will not be attending?",
+					type: "info",
+					showCancelButton: true,
+					confirmButtonText: "I'm Sure, Continue",
+					closeOnConfirm: false
+				}, function() {
+					swal({
+						title: "Not Attending",
+						text: "Your Name",
+						type: "input",
+						showCancelButton: true,
+						closeOnConfirm: false,
+						inputPlaceholder: "Your Name"
+					}, function(inputValue) {
+						if(inputValue === false) {
+							return false;
+						}
+
+						if(inputValue === "") {
+							swal.showInputError("You need to write something!");
+							return false;
+						}
+
+						rsvpName = inputValue;
+
+						swal({
+							title: "Confirm",
+							text: rsvpName+" will not be attending the wedding.",
+							type: "info",
+							showCancelButton: true
+						}, function() {
+							$.ajax({
+								type: 'post',
+								url: 'rsvp.php',
+								data: {
+									'inputname': rsvpName,
+									'inputevents': 'none',
+									'inputmessage': 'Not Attending.'
+								},
+								success: function(res) {
+									console.log(res);
+									swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
+								},
+								error: function(res) {
+									console.log(res);
+									swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
+								}
+							});
+						});
+					});
+				});
 			});
 		});
 	</script>
