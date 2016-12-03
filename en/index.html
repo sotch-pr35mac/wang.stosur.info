@@ -1913,6 +1913,8 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			const rsvpReady = false;
+
 			$("#aboutTheGroomButton").click(function() {
 				swal("About the Groom", "Preston Stosur-Bassett was born and raised in the Greater Chicagoland Area and has a fond love for his home city. He a motivated software-developer with a passion for Chinese language and culture. His native language is Javascript, but his English and Chinese aren't too bad either. Having knowledge in a wide range of fields, he is still passionate about learning something new everyday. He is a very eccentric individual with a fond enthusiam for music, photography, cinema, and art.");
 			});
@@ -1922,45 +1924,27 @@
 			});
 
 		 	$("#willAttendButton").click(function() {
-				// Handle the Will Attend RSVP Function here
-				var rsvpName;
-				var rsvpEmail;
-				var rsvpPlusOne;
-				var rsvpPlusOneName;
-				swal({
-					title: "Attending",
-					text: "Are you sure you will attend?",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "I'm Sure, Let's Continue",
-					closeOnConfirm: false
-				}, function() {
+				if(rsvpReady == true) {
+					// Handle the Will Attend RSVP Function here
+					var rsvpName;
+					var rsvpEmail;
+					var rsvpPlusOne;
+					var rsvpPlusOneName;
 					swal({
 						title: "Attending",
-						text: "Your Name",
-						type: "input",
+						text: "Are you sure you will attend?",
+						type: "info",
 						showCancelButton: true,
-						closeOnConfirm: false,
-						inputPlaceholder: "Your Name"
-					}, function(inputValue) {
-						if(inputValue === false) {
-							return false;
-						}
-
-						if(inputValue === "") {
-							swal.showInputError("You need to write something!");
-								return false;
-						}
-
-						rsvpName = inputValue;
-
+						confirmButtonText: "I'm Sure, Let's Continue",
+						closeOnConfirm: false
+					}, function() {
 						swal({
 							title: "Attending",
-							text: "Your Email",
+							text: "Your Name",
 							type: "input",
 							showCancelButton: true,
 							closeOnConfirm: false,
-							inputPlaceholder: "Your Email"
+							inputPlaceholder: "Your Name"
 						}, function(inputValue) {
 							if(inputValue === false) {
 								return false;
@@ -1968,45 +1952,96 @@
 
 							if(inputValue === "") {
 								swal.showInputError("You need to write something!");
-								return false;
+									return false;
 							}
 
-							rsvpEmail = inputValue;
+							rsvpName = inputValue;
 
 							swal({
-								title: "+1",
-								text: "Will you be requesting a plus one?",
-								type: "info",
+								title: "Attending",
+								text: "Your Email",
+								type: "input",
 								showCancelButton: true,
-								confirmButtonText: "Yes, Me +1",
-								cancelButtonText: "No, Just Me",
 								closeOnConfirm: false,
-								closeOnCancel: false
-							}, function(isPlus) {
-								if(isPlus) {
-									// Handle the plus one information here
-									rsvpPlusOne = true;
-									swal({
-										title: "+1",
-										text: "Your Plus One's Name",
-										type: "input",
-										showCancelButton: false,
-										closeOnConfirm: false,
-										inputPlaceholder: "+1 Name"
-									}, function(inputValue) {
-										if(inputValue === false) {
-											return false;
-										}
+								inputPlaceholder: "Your Email"
+							}, function(inputValue) {
+								if(inputValue === false) {
+									return false;
+								}
 
-										if(inputValue === "") {
-											swal.showInputError("You need to write something!");
-											return false;
-										}
+								if(inputValue === "") {
+									swal.showInputError("You need to write something!");
+									return false;
+								}
 
-										rsvpPlusOneName = inputValue;
+								rsvpEmail = inputValue;
+
+								swal({
+									title: "+1",
+									text: "Will you be requesting a plus one?",
+									type: "info",
+									showCancelButton: true,
+									confirmButtonText: "Yes, Me +1",
+									cancelButtonText: "No, Just Me",
+									closeOnConfirm: false,
+									closeOnCancel: false
+								}, function(isPlus) {
+									if(isPlus) {
+										// Handle the plus one information here
+										rsvpPlusOne = true;
+										swal({
+											title: "+1",
+											text: "Your Plus One's Name",
+											type: "input",
+											showCancelButton: false,
+											closeOnConfirm: false,
+											inputPlaceholder: "+1 Name"
+										}, function(inputValue) {
+											if(inputValue === false) {
+												return false;
+											}
+
+											if(inputValue === "") {
+												swal.showInputError("You need to write something!");
+												return false;
+											}
+
+											rsvpPlusOneName = inputValue;
+											swal({
+												title: "Confirm",
+												text: rsvpName+" will be attending with "+rsvpPlusOneName+", and we can contact you at "+rsvpEmail,
+												type: 'success',
+												showCancelButton: true
+											}, function() {
+												$.ajax({
+													type: 'post',
+													url: 'rsvp.php',
+													data: {
+														'inputemail': rsvpEmail,
+														'inputname': rsvpName,
+														'inputevents': 'wedding',
+														'inputmessage': "Attending. Will bring a Plus One. +1: "+rsvpPlusOneName
+													},
+													success: function(res) {
+														console.log(res);
+														swal("Thank you!", "Your RSVP has been successfully sent. Thank you!", "success");
+													},
+													error: function(res) {
+														console.log(res);
+														swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
+													}
+												});
+												swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
+											});
+										});
+									}
+									else {
+										// Handle the just me information here
+										rsvpPlusOne = false;
+										rsvpPlusOne = false;
 										swal({
 											title: "Confirm",
-											text: rsvpName+" will be attending with "+rsvpPlusOneName+", and we can contact you at "+rsvpEmail,
+											text: rsvpName+" will be attending alone, and we can contact you at "+rsvpEmail,
 											type: 'success',
 											showCancelButton: true
 										}, function() {
@@ -2017,7 +2052,7 @@
 													'inputemail': rsvpEmail,
 													'inputname': rsvpName,
 													'inputevents': 'wedding',
-													'inputmessage': "Attending. Will bring a Plus One. +1: "+rsvpPlusOneName
+													'inputmessage': "Attending. No Plus One."
 												},
 												success: function(res) {
 													console.log(res);
@@ -2028,103 +2063,80 @@
 													swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
 												}
 											});
-											swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
+											swal("Thank you!", "Your RSVP has been successfully sent. Thank you.", "success");
 										});
-									});
-								}
-								else {
-									// Handle the just me information here
-									rsvpPlusOne = false;
-									rsvpPlusOne = false;
-									swal({
-										title: "Confirm",
-										text: rsvpName+" will be attending alone, and we can contact you at "+rsvpEmail,
-										type: 'success',
-										showCancelButton: true
-									}, function() {
-										$.ajax({
-											type: 'post',
-											url: 'rsvp.php',
-											data: {
-												'inputemail': rsvpEmail,
-												'inputname': rsvpName,
-												'inputevents': 'wedding',
-												'inputmessage': "Attending. No Plus One."
-											},
-											success: function(res) {
-												console.log(res);
-												swal("Thank you!", "Your RSVP has been successfully sent. Thank you!", "success");
-											},
-											error: function(res) {
-												console.log(res);
-												swal("Uh-oh!", "There was an error while trying to submit your RSVP. Please try again at a later time.", "error");
-											}
-										});
-										swal("Thank you!", "Your RSVP has been successfully sent. Thank you.", "success");
-									});
-								}
+									}
+								});
 							});
 						});
 					});
-				});
+				}
+				else {
+					swal("RSVP Unavailable", "Please wait for your formal invitation to RSVP.", "warning")
+				}
 			});
 
 			$("#willNotAttendButton").click(function() {
-				// Handle the Will Not Attend RSVP Function here
-				var rsvpName;
-				swal({
-					title: "Not Attending",
-					text: "Are you sure you will not be attending?",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "I'm Sure, Continue",
-					closeOnConfirm: false
-				}, function() {
+				if(rsvpReady == true) {
+					// Handle the Will Not Attend RSVP Function here
+					var rsvpName;
 					swal({
 						title: "Not Attending",
-						text: "Your Name",
-						type: "input",
+						text: "Are you sure you will not be attending?",
+						type: "info",
 						showCancelButton: true,
-						closeOnConfirm: false,
-						inputPlaceholder: "Your Name"
-					}, function(inputValue) {
-						if(inputValue === false) {
-							return false;
-						}
-
-						if(inputValue === "") {
-							swal.showInputError("You need to write something!");
-							return false;
-						}
-
-						rsvpName = inputValue;
-
+						confirmButtonText: "I'm Sure, Continue",
+						closeOnConfirm: false
+					}, function() {
 						swal({
-							title: "Confirm",
-							text: rsvpName+" will not be attending the wedding.",
-							type: "success",
-							showCancelButton: true
-						}, function() {
-							$.ajax({
-								type: 'post',
-								url: 'rsvp.php',
-								data: {
-									'inputname': rsvpName,
-									'inputevents': 'none',
-									'inputmessage': 'Not Attending.'
-								},
-								success: function(res) {
-									console.log(res);
-									swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
-								},
-								error: function(res) {
-									console.log(res);
-									swal("Uh-oh!", "There was an error submitting your RSVP. Please try again at a later time.", "error");
-								}
+							title: "Not Attending",
+							text: "Your Name",
+							type: "input",
+							showCancelButton: true,
+							closeOnConfirm: false,
+							inputPlaceholder: "Your Name"
+						}, function(inputValue) {
+							if(inputValue === false) {
+								return false;
+							}
+
+							if(inputValue === "") {
+								swal.showInputError("You need to write something!");
+								return false;
+							}
+
+							rsvpName = inputValue;
+
+							swal({
+								title: "Confirm",
+								text: rsvpName+" will not be attending the wedding.",
+								type: "success",
+								showCancelButton: true
+							}, function() {
+								$.ajax({
+									type: 'post',
+									url: 'rsvp.php',
+									data: {
+										'inputname': rsvpName,
+										'inputevents': 'none',
+										'inputmessage': 'Not Attending.'
+									},
+									success: function(res) {
+										console.log(res);
+										swal("Thank you!", "Your RSVP has been successfully sent. Thank you. We regret you cannot make it to our wedding.", "success");
+									},
+									error: function(res) {
+										console.log(res);
+										swal("Uh-oh!", "There was an error submitting your RSVP. Please try again at a later time.", "error");
+									}
+								});
 							});
 						});
 					});
-				});
+				}
+				else {
+					swal("RSVP Unavailable", "Please wait for formal invitation to RSVP.", "warning");
+				}
 			});
 		});
 	</script>

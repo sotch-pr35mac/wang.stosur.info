@@ -1907,6 +1907,8 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			const rsvpReady = false;
+
 			$("#aboutTheGroomButton").click(function() {
 				swal("About the Groom", "Preston Stosur-Bassett was born and raised in the Greater Chicagoland Area and has a fond love for his home city. He a motivated software-developer with a passion for Chinese language and culture. His native language is Javascript, but his English and Chinese aren't too bad either. Having knowledge in a wide range of fields, he is still passionate about learning something new everyday. He is a very eccentric individual with a fond enthusiam for music, photography, cinema, and art.");
 			});
@@ -1916,50 +1918,30 @@
 			});
 
 		 	$("#willAttendButton").click(function() {
-				// Handle the Will Attend RSVP Function here
-				var rsvpName;
-				var rsvpEmail;
-				var rsvpPlusOne;
-				var rsvpPlusOneName;
-				swal({
-					title: "出席",
-					text: "确认出席?",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "我确定，继续",
-					cancelButtonText: "取消",
-					closeOnConfirm: false
-				}, function() {
+				if(rsvpReady == true) {
+					// Handle the Will Attend RSVP Function here
+					var rsvpName;
+					var rsvpEmail;
+					var rsvpPlusOne;
+					var rsvpPlusOneName;
 					swal({
 						title: "出席",
-						text: "您的名字",
-						type: "input",
-						confirmButtonText: "下一步",
+						text: "确认出席?",
+						type: "info",
 						showCancelButton: true,
+						confirmButtonText: "我确定，继续",
 						cancelButtonText: "取消",
-						closeOnConfirm: false,
-						inputPlaceholder: "您的名字"
-					}, function(inputValue) {
-						if(inputValue === false) {
-							return false;
-						}
-
-						if(inputValue === "") {
-							swal.showInputError("您需要填入信息！");
-								return false;
-						}
-
-						rsvpName = inputValue;
-
+						closeOnConfirm: false
+					}, function() {
 						swal({
 							title: "出席",
-							text: "您的电子邮件",
+							text: "您的名字",
 							type: "input",
 							confirmButtonText: "下一步",
 							showCancelButton: true,
 							cancelButtonText: "取消",
 							closeOnConfirm: false,
-							inputPlaceholder: "您的电子邮件"
+							inputPlaceholder: "您的名字"
 						}, function(inputValue) {
 							if(inputValue === false) {
 								return false;
@@ -1967,49 +1949,122 @@
 
 							if(inputValue === "") {
 								swal.showInputError("您需要填入信息！");
-								return false;
+									return false;
 							}
 
-							rsvpEmail = inputValue;
+							rsvpName = inputValue;
 
 							swal({
-								title: "+1",
-								text: "会带男／女伴出席吗？",
-								type: "info",
+								title: "出席",
+								text: "您的电子邮件",
+								type: "input",
+								confirmButtonText: "下一步",
 								showCancelButton: true,
-								confirmButtonText: "是的，我和男／女伴",
-								cancelButtonText: "不，只有我",
+								cancelButtonText: "取消",
 								closeOnConfirm: false,
-								closeOnCancel: false
-							}, function(isPlus) {
-								if(isPlus) {
-									// Handle the plus one information here
-									rsvpPlusOne = true;
-									swal({
-										title: "+1",
-										text: "您男／女伴的姓名",
-										type: "input",
-										confirmButtonText: "下一步",
-										showCancelButton: false,
-										closeOnConfirm: false,
-										inputPlaceholder: "男／女伴姓名"
-									}, function(inputValue) {
-										if(inputValue === false) {
-											return false;
-										}
+								inputPlaceholder: "您的电子邮件"
+							}, function(inputValue) {
+								if(inputValue === false) {
+									return false;
+								}
 
-										if(inputValue === "") {
-											swal.showInputError("您需要填写信息！");
-											return false;
-										}
+								if(inputValue === "") {
+									swal.showInputError("您需要填入信息！");
+									return false;
+								}
 
-										rsvpPlusOneName = inputValue;
+								rsvpEmail = inputValue;
+
+								swal({
+									title: "+1",
+									text: "会带男／女伴出席吗？",
+									type: "info",
+									showCancelButton: true,
+									confirmButtonText: "是的，我和男／女伴",
+									cancelButtonText: "不，只有我",
+									closeOnConfirm: false,
+									closeOnCancel: false
+								}, function(isPlus) {
+									if(isPlus) {
+										// Handle the plus one information here
+										rsvpPlusOne = true;
+										swal({
+											title: "+1",
+											text: "您男／女伴的姓名",
+											type: "input",
+											confirmButtonText: "下一步",
+											showCancelButton: false,
+											closeOnConfirm: false,
+											inputPlaceholder: "男／女伴姓名"
+										}, function(inputValue) {
+											if(inputValue === false) {
+												return false;
+											}
+
+											if(inputValue === "") {
+												swal.showInputError("您需要填写信息！");
+												return false;
+											}
+
+											rsvpPlusOneName = inputValue;
+											swal({
+												title: "确认信息",
+												text: rsvpName+"会和"+rsvpPlusOneName+"一起出席，我们可以通过"+rsvpEmail+"联系到您",
+												type: 'success',
+												confirmButtonText: "完成",
+												showCancelButton: true,
+												cancelButtonText: "取消"
+											}, function() {
+												$.ajax({
+													type: 'post',
+													url: 'rsvp.php',
+													data: {
+														'inputemail': rsvpEmail,
+														'inputname': rsvpName,
+														'inputevents': 'wedding',
+														'inputmessage': "Attending. Will bring a Plus One. +1: "+rsvpPlusOneName
+													},
+													success: function(res) {
+														console.log(res);
+														swal({
+															title: "谢谢",
+															text: "您的回复已经成功发送",
+															type: "success",
+															confirmButtonText: "完成",
+															showCancelButton: false
+														});
+													},
+													error: function(res) {
+														console.log(res);
+														swal({
+															title: "啊哦！",
+															text: "在您回复的时候出了点小错误， 请再试一遍",
+															type: "error",
+															confirmButtonText: "完成",
+															showCancelButton: false
+														});
+													}
+												});
+												swal({
+													title: "谢谢!",
+													text: "您的回复已经成功发送",
+													type: "success",
+													confirmButtonText: "完成",
+													showCancelButton: false
+												});
+											});
+										});
+									}
+									else {
+										// Handle the just me information here
+										rsvpPlusOne = false;
+										rsvpPlusOne = false;
 										swal({
 											title: "确认信息",
-											text: rsvpName+"会和"+rsvpPlusOneName+"一起出席，我们可以通过"+rsvpEmail+"联系到您",
+											text: rsvpName+" 将会一个人出席，我们可以通过 "+rsvpEmail+"联系到您",
 											type: 'success',
-											confirmButtonText: "完成",
 											showCancelButton: true,
+											confirmButtonText: "完成",
 											cancelButtonText: "取消"
 										}, function() {
 											$.ajax({
@@ -2019,7 +2074,7 @@
 													'inputemail': rsvpEmail,
 													'inputname': rsvpName,
 													'inputevents': 'wedding',
-													'inputmessage': "Attending. Will bring a Plus One. +1: "+rsvpPlusOneName
+													'inputmessage': "Attending. No Plus One."
 												},
 												success: function(res) {
 													console.log(res);
@@ -2044,144 +2099,101 @@
 											});
 											swal({
 												title: "谢谢!",
-												text: "您的回复已经成功发送",
+												text: "您的祝福已经成功发送!",
 												type: "success",
 												confirmButtonText: "完成",
 												showCancelButton: false
 											});
 										});
-									});
-								}
-								else {
-									// Handle the just me information here
-									rsvpPlusOne = false;
-									rsvpPlusOne = false;
-									swal({
-										title: "确认信息",
-										text: rsvpName+" 将会一个人出席，我们可以通过 "+rsvpEmail+"联系到您",
-										type: 'success',
-										showCancelButton: true,
-										confirmButtonText: "完成",
-										cancelButtonText: "取消"
-									}, function() {
-										$.ajax({
-											type: 'post',
-											url: 'rsvp.php',
-											data: {
-												'inputemail': rsvpEmail,
-												'inputname': rsvpName,
-												'inputevents': 'wedding',
-												'inputmessage': "Attending. No Plus One."
-											},
-											success: function(res) {
-												console.log(res);
-												swal({
-													title: "谢谢",
-													text: "您的回复已经成功发送",
-													type: "success",
-													confirmButtonText: "完成",
-													showCancelButton: false
-												});
-											},
-											error: function(res) {
-												console.log(res);
-												swal({
-													title: "啊哦！",
-													text: "在您回复的时候出了点小错误， 请再试一遍",
-													type: "error",
-													confirmButtonText: "完成",
-													showCancelButton: false
-												});
-											}
-										});
-										swal({
-											title: "谢谢!",
-											text: "您的祝福已经成功发送!",
-											type: "success",
-											confirmButtonText: "完成",
-											showCancelButton: false
-										});
-									});
-								}
+									}
+								});
 							});
 						});
 					});
-				});
+				}
+				else {
+					swal("回复不可用", "请等待正式邀请.", "warning");
+				}
 			});
 
 			$("#willNotAttendButton").click(function() {
-				// Handle the Will Not Attend RSVP Function here
-				var rsvpName;
-				swal({
-					title: "无法出席",
-					text: "您确定无法出席吗？",
-					type: "info",
-					showCancelButton: true,
-					confirmButtonText: "我确定，下一步",
-					cancelButtonText: "取消",
-					closeOnConfirm: false
-				}, function() {
+				if(rsvpReady == true) {
+					// Handle the Will Not Attend RSVP Function here
+					var rsvpName;
 					swal({
 						title: "无法出席",
-						text: "您的名字",
-						type: "input",
-						confirmButtonText: "下一步",
+						text: "您确定无法出席吗？",
+						type: "info",
 						showCancelButton: true,
+						confirmButtonText: "我确定，下一步",
 						cancelButtonText: "取消",
-						closeOnConfirm: false,
-						inputPlaceholder: "您的名字"
-					}, function(inputValue) {
-						if(inputValue === false) {
-							return false;
-						}
-
-						if(inputValue === "") {
-							swal.showInputError("您需要填写信息！");
-							return false;
-						}
-
-						rsvpName = inputValue;
-
+						closeOnConfirm: false
+					}, function() {
 						swal({
-							title: "确认信息",
-							text: rsvpName+" 无法参加婚礼。",
-							type: "success",
-							confirmButtonText:"完成",
+							title: "无法出席",
+							text: "您的名字",
+							type: "input",
+							confirmButtonText: "下一步",
+							showCancelButton: true,
 							cancelButtonText: "取消",
-							showCancelButton: true
-						}, function() {
-							$.ajax({
-								type: 'post',
-								url: 'rsvp.php',
-								data: {
-									'inputname': rsvpName,
-									'inputevents': 'none',
-									'inputmessage': 'Not Attending.'
-								},
-								success: function(res) {
-									console.log(res);
-									swal({
-										title: "谢谢！",
-										text: "您的祝福已经成功发送！谢谢您，很遗憾您不能到场庆祝。",
-										type: "success",
-										showCancelButton: false,
-										confirmButtonText: "完成"
-									});
-								},
-								error: function(res) {
-									console.log(res);
-									swal({
-										title: "啊哦！",
-										text: "在您回复的时候出了点小错误， 请再试一遍",
-										type: "error",
-										showCancelButton: false,
-										confirmButtonText: "完成"
-									});
-								}
+							closeOnConfirm: false,
+							inputPlaceholder: "您的名字"
+						}, function(inputValue) {
+							if(inputValue === false) {
+								return false;
+							}
+
+							if(inputValue === "") {
+								swal.showInputError("您需要填写信息！");
+								return false;
+							}
+
+							rsvpName = inputValue;
+
+							swal({
+								title: "确认信息",
+								text: rsvpName+" 无法参加婚礼。",
+								type: "success",
+								confirmButtonText:"完成",
+								cancelButtonText: "取消",
+								showCancelButton: true
+							}, function() {
+								$.ajax({
+									type: 'post',
+									url: 'rsvp.php',
+									data: {
+										'inputname': rsvpName,
+										'inputevents': 'none',
+										'inputmessage': 'Not Attending.'
+									},
+									success: function(res) {
+										console.log(res);
+										swal({
+											title: "谢谢！",
+											text: "您的祝福已经成功发送！谢谢您，很遗憾您不能到场庆祝。",
+											type: "success",
+											showCancelButton: false,
+											confirmButtonText: "完成"
+										});
+									},
+									error: function(res) {
+										console.log(res);
+										swal({
+											title: "啊哦！",
+											text: "在您回复的时候出了点小错误， 请再试一遍",
+											type: "error",
+											showCancelButton: false,
+											confirmButtonText: "完成"
+										});
+									}
+								});
 							});
 						});
 					});
-				});
+				}
+				else {
+					swal("回复不可用", "请等待正式邀请.", "warning");
+				}
 			});
 		});
 	</script>
